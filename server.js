@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const Login = require('./models/login')
+const Member = require('./models/member');
 
 
 //------------------------------------------ DB CONNECTION ---------------------------------------------------------//
@@ -51,6 +52,26 @@ app.post('/login', async (req, res) => {
     }
     catch (error) {
 
+    }
+})
+
+app.get('/memberdetails',async (req,res)=>{
+    try{
+        const members = await Member.find();
+        res.json(members);
+    }
+    catch (error){
+        console.error(error);
+    }
+})
+
+app.get('/amountentry',async(req,res)=>{
+    try{
+        const amount = await Member.find();
+        res.json(amount);
+    }
+    catch(error){
+        console.error(error);
     }
 })
 
