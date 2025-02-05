@@ -4,17 +4,37 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-const Login = require('./models/login')
-const Member = require('./models/member');
-
-
-//------------------------------------------ DB CONNECTION ---------------------------------------------------------//
-
 const app = express();
-const PORT = process.env.PORT || 5000;
-
 app.use(cors());
 app.use(bodyParser.json());
+
+
+
+//---------------------------------------------------------------------------------------------------------------//
+
+// Route Imports 
+
+const Login = require('./routes/login');
+const Member = require('./routes/member');
+const Amountentry = require('./routes/amountentry')
+
+
+
+//---------------------------------------------------------------------------------------------------------------//
+
+// Route Call
+
+app.use('/api', Login);
+app.use('/api', Member);
+app.use('/api', Amountentry);
+
+
+
+//---------------------------------------------------------------------------------------------------------------//
+
+// Db Connection
+
+const PORT = process.env.PORT || 5000;
 
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('MongoDB connected'))
@@ -27,51 +47,85 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 
 
-//---------------------------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------------------------------------------//
 
 
-app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    // console.log(username, password);
-    try {
-        const users = await Login.findOne({ username: username })
 
-        if (users) {
-            if (users.password === password) {
-                return res.json({ success: true, message: "LOGIN SUCCESS" });
-            }
-            else {
-                return res.json({ success: false, message: "PASSWORD WRONG" });
 
-            }
-        }
-        else {
-            return res.json({ success: false, message: "USER IS NOT AVAILABLE" });
 
-        }
-    }
-    catch (error) {
 
-    }
-})
 
-app.get('/memberdetails',async (req,res)=>{
-    try{
-        const members = await Member.find();
-        res.json(members);
-    }
-    catch (error){
-        console.error(error);
-    }
-})
 
-app.get('/amountentry',async(req,res)=>{
-    try{
-        const amount = await Member.find();
-        res.json(amount);
-    }
-    catch(error){
-        console.error(error);
-    }
-})
+
+
+
+
+
+
+
+
+
+
+
+// app.get('/amountentry', async (req, res) => {
+//     try {
+//         const amounts = await Amount.find().sort({ date: -1 });
+//         res.json(amounts);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send('Error retrieving data');
+//     }
+// });
+
+// // Save new entry
+// app.post('/amountsave', async (req, res) => {
+//     const { name, amounts, nodays, fine, total, date } = req.body;
+
+//     if (!name || !amounts || !nodays || !fine || !total || !date) {
+//         return res.status(400).json({ failed: 'All fields are required' });
+//     }
+
+//     try {
+//         const newEntry = new Amount({
+//             name,
+//             amount: amounts,
+//             noofdays: nodays,
+//             fine,
+//             total,
+//             date: new Date(date),
+//         });
+
+//         await newEntry.save();
+//         res.json({ success: 'Saved' });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send('Error saving data');
+//     }
+// });
+
+// // Filter entries by date range
+// app.get('/amountentry/filter', async (req, res) => {
+//     const { fromDate, toDate } = req.query;
+
+//     if (!fromDate || !toDate) {
+//         return res.status(400).json({ failed: 'From and To dates are required' });
+//     }
+
+//     try {
+//         const filteredEntries = await Amount.find({
+//             date: {
+//                 $gte: new Date(fromDate),
+//                 $lte: new Date(toDate),
+//             },
+//         }).sort({ date: -1 });
+
+//         res.json(filteredEntries);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send('Error filtering data');
+//     }
+// });
+
+
+
 
